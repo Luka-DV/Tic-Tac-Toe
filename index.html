@@ -2,17 +2,42 @@
 <html lang="en">
 	<head>
     	<meta charset="utf-8">
-    	<meta name="description" content="This is where your description goes">
-    	<meta name="keywords" content="one, two, three">
+    	<meta name="description" content="Tic-Tac-Toe game">
+    	<meta name="keywords" content="100devs, game">
 
-		<title>Title in the tab</title>
+		<title>Tic-Tac-Toe</title>
 
-		<!-- external CSS link -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
 		<link rel="stylesheet" href="css/normalize.css">
 		<link rel="stylesheet" href="css/style.css">
 	</head>
 	<body>
-		<img src="img/turbo.jpg" alt="Power Rangers Turbo">
+
+		<main>
+			<section id="player1" class="player">Score</section>
+
+			<section class="container">
+				<section id="1A" class="grid-item"></section>
+				<section id="1B" class="grid-item"></section>
+				<section id="1C" class="grid-item"></section>
+
+				<section id="2A" class="grid-item"></section>
+				<section id="2B" class="grid-item"></section>
+				<section id="2C" class="grid-item"></section>
+ 
+				<section id="3A" class="grid-item"></section>
+				<section id="3B" class="grid-item"></section>
+				<section id="3C" class="grid-item"></section>
+			</section>
+
+			<section id="player2" class="player">Score</section>
+
+			<section id="reset">
+				<button type="button">Reset game</button>
+			</section>
+		</main>
 
 		<script type="text/javascript" src="js/main.js"></script>
 	</body>
