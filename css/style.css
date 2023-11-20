@@ -3,17 +3,61 @@
 /*******************************************/
 
 /* Box Model Hack */
-*{
+* {
   box-sizing: border-box;
 }
 
 /******************************************
 /* LAYOUT
 /*******************************************/
-img{
-  display: block;
-  margin: 0 auto;
-  width: 25%;
+
+body {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+}
+
+main {
+  padding-top: 5%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.player {
+  width: 20%;
+  text-align: center;
+  font-size: clamp(1em, 2.5svw, 3em);
+  /* align-self: stretch; */
+}
+
+.container {
+  width: 60%;
+  max-width: 700px;
+  aspect-ratio: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  background-color: black;
+  grid-gap: 1%;
+}
+
+.grid-item {
+  background: white;
+}
+
+#reset {
+  display: flex;
+  justify-content: center;
+  padding-top: 2.5%;
+  width: 100%;
+}
+
+#reset button {
+  width: clamp(91px, 25%, 150px);
+  min-height: 2rem;
+  border-radius: 10px;
+  font-weight: 700;
 }
 
 
