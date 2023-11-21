@@ -2,6 +2,12 @@
 "use strict";
 
 
+//finish the game logic
+
+
+document.querySelectorAll()
+
+
 
 //Players
 
@@ -25,17 +31,17 @@ const updatePlayerScore = {
 
 const playingBoard = {
     _playingBoardArray: {
-    "1A": null,
-    "1B": null,
-    "1C": null,
+    "A1": null,
+    "B1": null,
+    "C1": null,
 
-    "2A": null,
-    "2B": null, 
-    "2C": null,
+    "A2": null,
+    "B2": null, 
+    "C2": null,
 
-    "3A": null,
-    "3B": null, 
-    "3C": null
+    "A3": null,
+    "B3": null, 
+    "C3": null
     },
 
     choseField: function(player, field) {
@@ -50,19 +56,20 @@ const playingBoard = {
 
     checkWinner: function(player) {
         if(  //ROWS:
-        (this._playingBoardArray["1A"] && this._playingBoardArray["1A"] === this._playingBoardArray["1B"] && this._playingBoardArray["1A"] === this._playingBoardArray["1C"]) ||
-        (this._playingBoardArray["2A"] && this._playingBoardArray["2A"] === this._playingBoardArray["2B"] && this._playingBoardArray["2A"] === this._playingBoardArray["2C"]) ||
-        (this._playingBoardArray["3A"] && this._playingBoardArray["3A"] === this._playingBoardArray["3B"] && this._playingBoardArray["3A"] === this._playingBoardArray["3C"]) ||
+        (this._playingBoardArray["A1"] && this._playingBoardArray["A1"] === this._playingBoardArray["B1"] && this._playingBoardArray["A1"] === this._playingBoardArray["C1"]) ||
+        (this._playingBoardArray["A2"] && this._playingBoardArray["A2"] === this._playingBoardArray["B2"] && this._playingBoardArray["A2"] === this._playingBoardArray["C2"]) ||
+        (this._playingBoardArray["A3"] && this._playingBoardArray["A3"] === this._playingBoardArray["B3"] && this._playingBoardArray["A3"] === this._playingBoardArray["C3"]) ||
         //COLUMNS:
-        (this._playingBoardArray["1A"] && this._playingBoardArray["1A"] === this._playingBoardArray["2A"] && this._playingBoardArray["1A"] === this._playingBoardArray["3A"]) ||
-        (this._playingBoardArray["1B"] && this._playingBoardArray["1B"] === this._playingBoardArray["2B"] && this._playingBoardArray["1B"] === this._playingBoardArray["3B"]) ||
-        (this._playingBoardArray["1C"] && this._playingBoardArray["1C"] === this._playingBoardArray["2C"] && this._playingBoardArray["1C"] === this._playingBoardArray["3C"]) ||
+        (this._playingBoardArray["A1"] && this._playingBoardArray["A1"] === this._playingBoardArray["A2"] && this._playingBoardArray["A1"] === this._playingBoardArray["A3"]) ||
+        (this._playingBoardArray["B1"] && this._playingBoardArray["B1"] === this._playingBoardArray["B2"] && this._playingBoardArray["B1"] === this._playingBoardArray["B3"]) ||
+        (this._playingBoardArray["C1"] && this._playingBoardArray["C1"] === this._playingBoardArray["C2"] && this._playingBoardArray["C1"] === this._playingBoardArray["C3"]) ||
         //DIAGONAL:
-        (this._playingBoardArray["1A"] && this._playingBoardArray["1A"] === this._playingBoardArray["2B"] && this._playingBoardArray["1A"] === this._playingBoardArray["3C"]) ||
-        (this._playingBoardArray["1C"] && this._playingBoardArray["1C"] === this._playingBoardArray["2B"] && this._playingBoardArray["1C"] === this._playingBoardArray["3A"])
+        (this._playingBoardArray["A1"] && this._playingBoardArray["A1"] === this._playingBoardArray["B2"] && this._playingBoardArray["A1"] === this._playingBoardArray["C3"]) ||
+        (this._playingBoardArray["C1"] && this._playingBoardArray["C1"] === this._playingBoardArray["B2"] && this._playingBoardArray["C1"] === this._playingBoardArray["A3"])
         ) {
             alert(`${player} won the game!`)
             updatePlayerScore.update(player);
+            whichPlayer.round = 1;
         }
         
     }
