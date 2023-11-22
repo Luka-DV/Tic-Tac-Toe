@@ -2,12 +2,6 @@
 "use strict";
 
 
-//finish the game logic
-
-
-
-
-
 
 //Players
 
@@ -21,9 +15,32 @@ const playerScores = {
         else this._player2Score++
     },
 
-    showScoreOnPage: function() {
+    showScoresOnPage: function() {
         document.querySelector("#player1 .playerScore").innerText = this._player1Score;
         document.querySelector("#player2 .playerScore").innerText = this._player2Score;
+    },
+
+    savePlayerPointsToLocalStorage: function() {
+        const playerScores = {
+            "Player 1": this._player1Score,
+            "Player 2": this._player2Score
+        };
+        localStorage.setItem("Tic-Tac-Toe Scores", JSON.stringify(playerScores));
+    },
+
+    importPlayerPointsFromLocalStorage: function() {
+        if(localStorage.getItem("Tic-Tac-Toe Scores")) {
+            const playerPoints = JSON.parse(localStorage.getItem("Tic-Tac-Toe Scores"));
+            this._player1Score = playerPoints["Player 1"];
+            this._player2Score = playerPoints["Player 2"];
+        }
+    },
+
+    resetScores: function() {
+        this._player1Score = 0;
+        this._player2Score = 0;
+        this.showScoresOnPage();
+        this.savePlayerPointsToLocalStorage();
     }
 }
 
@@ -47,7 +64,8 @@ const playingBoard = {
 
     choseField: function(player, field) {
         this.displayPlayerMove(player, field);
-        this.disableClickOnFields();
+        this.disableClickOnPlayedField(field);
+        this.tempDisableClickOnOtherFieldsDuringAnimation();
         whichPlayer.nextRound();
         setTimeout(()=> {
             if(player === "Player 1") {
@@ -56,6 +74,7 @@ const playingBoard = {
             } else {
                 this._playingBoardArray[field] = "X";
             }
+            this.savePlayingBoardToLocalStorage();
             this.checkWinner(player);
         }, 500)
     },
@@ -76,7 +95,8 @@ const playingBoard = {
             alert(`${player} won the game!`)
             eventListenerHandler.removeEventListenersFromPlayingBoard();
             playerScores.updateScore(player);
-            playerScores.showScoreOnPage()
+            playerScores.savePlayerPointsToLocalStorage();
+            playerScores.showScoresOnPage()
             whichPlayer._round = 1;
            
         } /* else {
@@ -93,12 +113,51 @@ const playingBoard = {
         }
     },
 
-    disableClickOnFields: function() {
+    tempDisableClickOnOtherFieldsDuringAnimation: function() {
         document.querySelector(".container").style.pointerEvents = "none";
         setTimeout(() => {
             document.querySelector(".container").style.pointerEvents = "auto";
         }, 500)
+    },
+
+    disableClickOnPlayedField: function(field) {
+        document.querySelector(`#${field}`).style.pointerEvents = "none";
+    },
+
+    enableClickOnAllFields: function() {
+        document.querySelectorAll(".container>section").forEach(element => element.style.pointerEvents = "auto");
+    },
+
+    savePlayingBoardToLocalStorage: function() {
+        const playingBoardSetup = this._playingBoardArray;
+        localStorage.setItem("Tic-Tac-Toe PlayingBoard", JSON.stringify(playingBoardSetup));
+    },
+
+    importPlayingBoardFromLocalStorage: function() {
+        if(localStorage.getItem("Tic-Tac-Toe PlayingBoard")) {
+            const boardSetup = JSON.parse(localStorage.getItem("Tic-Tac-Toe PlayingBoard"));
+            this._playingBoardArray = boardSetup;
+
+            for(let field in boardSetup) {
+                if(boardSetup[field]) {
+                    if(boardSetup[field] === "O") {
+                        document.querySelector(`#${field} svg circle`).classList.remove("hidden");
+                    } else {
+                        document.querySelector(`#${field} svg .line1`).classList.remove("hidden");
+                        document.querySelector(`#${field} svg .line2`).classList.remove("hidden");
+                    }
+                }
+            }
+        }
+    },
+
+    resetBoard: function() {
+        //finish the function
+        //dont forget about local storage!
     }
+
+
+
 
 }
 
@@ -130,8 +189,26 @@ const eventListenerHandler = {
 
     removeEventListenersFromPlayingBoard: function() {
         document.querySelectorAll(".grid-item").forEach(item => item.removeEventListener("click", this.passPlayDataForEventListener));
+    },
+
+    addResetScoreEventListener: function() {
+        document.querySelector("#resetButton").addEventListener("click", () => {
+            playerScores.resetScores();
+        })
+    },
+
+    addNewGameEventListener: function() {
+        document.querySelector("#newGameButton").addEventListener("click", () => {
+            playingBoard.resetBoard();
+        })
     }
 }
 
 
+
+
+playerScores.importPlayerPointsFromLocalStorage();
+playerScores.showScoresOnPage();
+playingBoard.importPlayingBoardFromLocalStorage();
 eventListenerHandler.addEventListenersToPlayingBoard();
+eventListenerHandler.addResetScoreEventListener();
