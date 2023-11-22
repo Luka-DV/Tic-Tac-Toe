@@ -5,24 +5,25 @@
 //finish the game logic
 
 
-document.querySelectorAll()
+
 
 
 
 //Players
 
-const player1 = {
-    score: 0
-}
 
-const player2 = {
-    score: 0
-}
+const playerScores = {
+    _player1Score: 0,
+    _player2Score: 0,
 
-const updatePlayerScore = {
-    update: function(player) {
-        if(player === "Player 1") player1.score++
-        else player2.score++
+    updateScore: function(player) {
+        if(player === "Player 1") this._player1Score++
+        else this._player2Score++
+    },
+
+    showScoreOnPage: function() {
+        document.querySelector("#player1 .playerScore").innerText = this._player1Score;
+        document.querySelector("#player2 .playerScore").innerText = this._player2Score;
     }
 }
 
@@ -45,13 +46,18 @@ const playingBoard = {
     },
 
     choseField: function(player, field) {
-        if(player === "Player 1") {
-            this._playingBoardArray[field] = "O";
+        this.displayPlayerMove(player, field);
+        this.disableClickOnFields();
+        whichPlayer.nextRound();
+        setTimeout(()=> {
+            if(player === "Player 1") {
+                this._playingBoardArray[field] = "O";
+    
+            } else {
+                this._playingBoardArray[field] = "X";
+            }
             this.checkWinner(player);
-        } else {
-            this._playingBoardArray[field] = "X";
-            this.checkWinner(player);
-        }
+        }, 500)
     },
 
     checkWinner: function(player) {
@@ -68,21 +74,44 @@ const playingBoard = {
         (this._playingBoardArray["C1"] && this._playingBoardArray["C1"] === this._playingBoardArray["B2"] && this._playingBoardArray["C1"] === this._playingBoardArray["A3"])
         ) {
             alert(`${player} won the game!`)
-            updatePlayerScore.update(player);
-            whichPlayer.round = 1;
+            eventListenerHandler.removeEventListenersFromPlayingBoard();
+            playerScores.updateScore(player);
+            playerScores.showScoreOnPage()
+            whichPlayer._round = 1;
+           
+        } /* else {
+            whichPlayer.nextRound();
+        } */
+    },
+
+    displayPlayerMove: function(player, field) {
+        if(player === "Player 1") {
+            document.querySelector(`#${field} svg circle`).classList.remove("hidden");
+        } else {
+            document.querySelector(`#${field} svg .line1`).classList.remove("hidden");
+            document.querySelector(`#${field} svg .line2`).classList.remove("hidden");
         }
-        
+    },
+
+    disableClickOnFields: function() {
+        document.querySelector(".container").style.pointerEvents = "none";
+        setTimeout(() => {
+            document.querySelector(".container").style.pointerEvents = "auto";
+        }, 500)
     }
+
 }
 
 const whichPlayer = {
-    round: 1,
-    currentPlayer: null,
+    _round: 1,
+    currentPlayer: "Player 1",
     nextRound: function() {
-        this.round++
+        this._round++
+        this.alternatePlayers();
+        console.log(this._round)
     },
     alternatePlayers: function() {
-        if(this.round % 2 === 1) {
+        if(this._round % 2 === 1) {
             this.currentPlayer = "Player 1"
         } else {
             this.currentPlayer = "Player 2"
@@ -90,4 +119,19 @@ const whichPlayer = {
     }
 }
 
+const eventListenerHandler = {
+    passPlayDataForEventListener: function(item){
+        playingBoard.choseField(whichPlayer.currentPlayer, item.currentTarget.id);
+    },
 
+    addEventListenersToPlayingBoard: function() {
+        document.querySelectorAll(".grid-item").forEach(item => item.addEventListener("click", this.passPlayDataForEventListener));
+    },
+
+    removeEventListenersFromPlayingBoard: function() {
+        document.querySelectorAll(".grid-item").forEach(item => item.removeEventListener("click", this.passPlayDataForEventListener));
+    }
+}
+
+
+eventListenerHandler.addEventListenersToPlayingBoard();
