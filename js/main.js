@@ -65,7 +65,8 @@ const playingBoard = {
         this.displayPlayerMove(player, field);
         this.disableClickOnPlayedField(field);
         this.tempDisableClickOnOtherFieldsDuringAnimation();
-        whichPlayer.nextRound();
+        whichPlayerLogic.nextRound();
+        whichPlayerLogic.saveCurrentRoundAndPlayerToLocalStorage();
         setTimeout(()=> {
             if(player === "Player 1") {
                 this._playingBoardObject[field] = "O";
@@ -96,7 +97,7 @@ const playingBoard = {
             playerScores.updateScore(player);
             playerScores.savePlayerPointsToLocalStorage();
             playerScores.showScoresOnPage()
-            whichPlayer._round = 1;
+            whichPlayerLogic._round = 1;
             this._gameEnded = true;
            
         } 
@@ -152,8 +153,8 @@ const playingBoard = {
 
     newGameResetBoard: function() {
 
-        whichPlayer._round = 1;
-        whichPlayer.currentPlayer = "Player 1";
+        whichPlayerLogic._round = 1;
+        whichPlayerLogic.currentPlayer = "Player 1";
 
         const boardSetup = this._playingBoardObject;
         for(let field in boardSetup) {
@@ -193,7 +194,7 @@ const playingBoard = {
 
 }
 
-const whichPlayer = {
+const whichPlayerLogic = {
     _round: 1,
     currentPlayer: "Player 1",
     nextRound: function() {
@@ -207,6 +208,22 @@ const whichPlayer = {
         } else {
             this.currentPlayer = "Player 2"
         }
+    },
+
+    saveCurrentRoundAndPlayerToLocalStorage: function() {
+        const currentRoundAndPlayer = {
+            round: this._round,
+            player: this.currentPlayer
+        }
+        localStorage.setItem("Tic-Tac-Toe RoundAndPlayer", JSON.stringify(currentRoundAndPlayer));
+    },
+
+    importCurrentRoundAndPlayerFromLocalStorage: function() {
+        if(localStorage.getItem("Tic-Tac-Toe RoundAndPlayer")) {
+            const currentRoundAndPlayer = JSON.parse(localStorage.getItem("Tic-Tac-Toe RoundAndPlayer"));
+            this._round = currentRoundAndPlayer.round;
+            this.currentPlayer = currentRoundAndPlayer.player;
+        }
     }
 }
 
@@ -215,7 +232,7 @@ const whichPlayer = {
 
 const eventListenerHandler = {
     passPlayDataForEventListener: function(item){
-        playingBoard.choseField(whichPlayer.currentPlayer, item.currentTarget.id);
+        playingBoard.choseField(whichPlayerLogic.currentPlayer, item.currentTarget.id);
     },
 
     addEventListenersToPlayingBoard: function() {
@@ -243,6 +260,7 @@ const eventListenerHandler = {
 playerScores.importPlayerPointsFromLocalStorage();
 playerScores.showScoresOnPage();
 playingBoard.importPlayingBoardFromLocalStorage();
+whichPlayerLogic.importCurrentRoundAndPlayerFromLocalStorage();
 eventListenerHandler.addEventListenersToPlayingBoard();
 eventListenerHandler.addResetScoreEventListener();
 eventListenerHandler.addNewGameEventListener();
