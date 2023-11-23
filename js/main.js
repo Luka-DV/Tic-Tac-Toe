@@ -1,18 +1,15 @@
 
 "use strict";
 
-
-
-//Players
-
+//Player scores
 
 const playerScores = {
     _player1Score: 0,
     _player2Score: 0,
 
     updateScore: function(player) {
-        if(player === "Player 1") this._player1Score++
-        else this._player2Score++
+        if(player === "Player 1") this._player1Score++;
+        else this._player2Score++;
     },
 
     showScoresOnPage: function() {
@@ -48,7 +45,7 @@ const playerScores = {
 //Game Logic
 
 const playingBoard = {
-    _playingBoardArray: {
+    _playingBoardObject: {
     "A1": null,
     "B1": null,
     "C1": null,
@@ -62,6 +59,8 @@ const playingBoard = {
     "C3": null
     },
 
+    _gameEnded: false,
+
     choseField: function(player, field) {
         this.displayPlayerMove(player, field);
         this.disableClickOnPlayedField(field);
@@ -69,10 +68,10 @@ const playingBoard = {
         whichPlayer.nextRound();
         setTimeout(()=> {
             if(player === "Player 1") {
-                this._playingBoardArray[field] = "O";
+                this._playingBoardObject[field] = "O";
     
             } else {
-                this._playingBoardArray[field] = "X";
+                this._playingBoardObject[field] = "X";
             }
             this.savePlayingBoardToLocalStorage();
             this.checkWinner(player);
@@ -81,16 +80,16 @@ const playingBoard = {
 
     checkWinner: function(player) {
         if(  //ROWS:
-        (this._playingBoardArray["A1"] && this._playingBoardArray["A1"] === this._playingBoardArray["B1"] && this._playingBoardArray["A1"] === this._playingBoardArray["C1"]) ||
-        (this._playingBoardArray["A2"] && this._playingBoardArray["A2"] === this._playingBoardArray["B2"] && this._playingBoardArray["A2"] === this._playingBoardArray["C2"]) ||
-        (this._playingBoardArray["A3"] && this._playingBoardArray["A3"] === this._playingBoardArray["B3"] && this._playingBoardArray["A3"] === this._playingBoardArray["C3"]) ||
+        (this._playingBoardObject["A1"] && this._playingBoardObject["A1"] === this._playingBoardObject["B1"] && this._playingBoardObject["A1"] === this._playingBoardObject["C1"]) ||
+        (this._playingBoardObject["A2"] && this._playingBoardObject["A2"] === this._playingBoardObject["B2"] && this._playingBoardObject["A2"] === this._playingBoardObject["C2"]) ||
+        (this._playingBoardObject["A3"] && this._playingBoardObject["A3"] === this._playingBoardObject["B3"] && this._playingBoardObject["A3"] === this._playingBoardObject["C3"]) ||
         //COLUMNS:
-        (this._playingBoardArray["A1"] && this._playingBoardArray["A1"] === this._playingBoardArray["A2"] && this._playingBoardArray["A1"] === this._playingBoardArray["A3"]) ||
-        (this._playingBoardArray["B1"] && this._playingBoardArray["B1"] === this._playingBoardArray["B2"] && this._playingBoardArray["B1"] === this._playingBoardArray["B3"]) ||
-        (this._playingBoardArray["C1"] && this._playingBoardArray["C1"] === this._playingBoardArray["C2"] && this._playingBoardArray["C1"] === this._playingBoardArray["C3"]) ||
+        (this._playingBoardObject["A1"] && this._playingBoardObject["A1"] === this._playingBoardObject["A2"] && this._playingBoardObject["A1"] === this._playingBoardObject["A3"]) ||
+        (this._playingBoardObject["B1"] && this._playingBoardObject["B1"] === this._playingBoardObject["B2"] && this._playingBoardObject["B1"] === this._playingBoardObject["B3"]) ||
+        (this._playingBoardObject["C1"] && this._playingBoardObject["C1"] === this._playingBoardObject["C2"] && this._playingBoardObject["C1"] === this._playingBoardObject["C3"]) ||
         //DIAGONAL:
-        (this._playingBoardArray["A1"] && this._playingBoardArray["A1"] === this._playingBoardArray["B2"] && this._playingBoardArray["A1"] === this._playingBoardArray["C3"]) ||
-        (this._playingBoardArray["C1"] && this._playingBoardArray["C1"] === this._playingBoardArray["B2"] && this._playingBoardArray["C1"] === this._playingBoardArray["A3"])
+        (this._playingBoardObject["A1"] && this._playingBoardObject["A1"] === this._playingBoardObject["B2"] && this._playingBoardObject["A1"] === this._playingBoardObject["C3"]) ||
+        (this._playingBoardObject["C1"] && this._playingBoardObject["C1"] === this._playingBoardObject["B2"] && this._playingBoardObject["C1"] === this._playingBoardObject["A3"])
         ) {
             alert(`${player} won the game!`)
             eventListenerHandler.removeEventListenersFromPlayingBoard();
@@ -98,10 +97,9 @@ const playingBoard = {
             playerScores.savePlayerPointsToLocalStorage();
             playerScores.showScoresOnPage()
             whichPlayer._round = 1;
+            this._gameEnded = true;
            
-        } /* else {
-            whichPlayer.nextRound();
-        } */
+        } 
     },
 
     displayPlayerMove: function(player, field) {
@@ -113,30 +111,31 @@ const playingBoard = {
         }
     },
 
-    tempDisableClickOnOtherFieldsDuringAnimation: function() {
-        document.querySelector(".container").style.pointerEvents = "none";
+
+   tempDisableClickOnOtherFieldsDuringAnimation: function() {
+        document.querySelectorAll(".grid-item").forEach(element => element.classList.add("disable-click-all"));
         setTimeout(() => {
-            document.querySelector(".container").style.pointerEvents = "auto";
+            document.querySelectorAll(".grid-item").forEach(element => element.classList.remove("disable-click-all"));
         }, 500)
-    },
+    }, 
 
     disableClickOnPlayedField: function(field) {
-        document.querySelector(`#${field}`).style.pointerEvents = "none";
+        document.querySelector(`#${field}`).classList.add("disable-click");
     },
 
     enableClickOnAllFields: function() {
-        document.querySelectorAll(".container>section").forEach(element => element.style.pointerEvents = "auto");
+        document.querySelectorAll(".grid-item").forEach(element => element.classList.remove("disable-click"));
     },
 
     savePlayingBoardToLocalStorage: function() {
-        const playingBoardSetup = this._playingBoardArray;
+        const playingBoardSetup = this._playingBoardObject;
         localStorage.setItem("Tic-Tac-Toe PlayingBoard", JSON.stringify(playingBoardSetup));
     },
 
     importPlayingBoardFromLocalStorage: function() {
         if(localStorage.getItem("Tic-Tac-Toe PlayingBoard")) {
             const boardSetup = JSON.parse(localStorage.getItem("Tic-Tac-Toe PlayingBoard"));
-            this._playingBoardArray = boardSetup;
+            this._playingBoardObject = boardSetup;
 
             for(let field in boardSetup) {
                 if(boardSetup[field]) {
@@ -151,13 +150,46 @@ const playingBoard = {
         }
     },
 
-    resetBoard: function() {
-        //finish the function
-        //dont forget about local storage!
+    newGameResetBoard: function() {
+
+        whichPlayer._round = 1;
+        whichPlayer.currentPlayer = "Player 1";
+
+        const boardSetup = this._playingBoardObject;
+        for(let field in boardSetup) {
+            if(boardSetup[field]) {
+                if(boardSetup[field] === "O") {
+                    document.querySelector(`#${field} svg circle`).classList.add("hidden");
+                } else {
+                    document.querySelector(`#${field} svg .line1`).classList.add("hidden");
+                    document.querySelector(`#${field} svg .line2`).classList.add("hidden");
+                }
+            }
+        }
+
+        this._playingBoardObject = {
+            "A1": null,
+            "B1": null,
+            "C1": null,
+        
+            "A2": null,
+            "B2": null, 
+            "C2": null,
+        
+            "A3": null,
+            "B3": null, 
+            "C3": null
+            };
+
+        this.savePlayingBoardToLocalStorage();
+
+        if(playingBoard._gameEnded) {
+            eventListenerHandler.addEventListenersToPlayingBoard();
+        } 
+        
+        this.enableClickOnAllFields();
+        
     }
-
-
-
 
 }
 
@@ -177,6 +209,9 @@ const whichPlayer = {
         }
     }
 }
+
+
+//Event listeners
 
 const eventListenerHandler = {
     passPlayDataForEventListener: function(item){
@@ -199,12 +234,10 @@ const eventListenerHandler = {
 
     addNewGameEventListener: function() {
         document.querySelector("#newGameButton").addEventListener("click", () => {
-            playingBoard.resetBoard();
+            playingBoard.newGameResetBoard();
         })
     }
 }
-
-
 
 
 playerScores.importPlayerPointsFromLocalStorage();
@@ -212,3 +245,4 @@ playerScores.showScoresOnPage();
 playingBoard.importPlayingBoardFromLocalStorage();
 eventListenerHandler.addEventListenersToPlayingBoard();
 eventListenerHandler.addResetScoreEventListener();
+eventListenerHandler.addNewGameEventListener();
