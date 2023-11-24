@@ -41,7 +41,6 @@ const playerScores = {
     }
 }
 
-
 //Game Logic
 
 const playingBoard = {
@@ -76,6 +75,7 @@ const playingBoard = {
             }
             this.checkWinner(player);
             this.savePlayingBoardToLocalStorage();
+            this.saveGameStateToLocalStorage();
         }, 500)
     },
 
@@ -111,7 +111,6 @@ const playingBoard = {
         }
     },
 
-
    tempDisableClickOnOtherFieldsDuringAnimation: function() {
         document.querySelectorAll(".grid-item").forEach(element => element.classList.add("disable-click-all"));
         setTimeout(() => {
@@ -130,7 +129,7 @@ const playingBoard = {
     savePlayingBoardToLocalStorage: function() {
         const playingBoardSetup = this._playingBoardObject;
         localStorage.setItem("Tic-Tac-Toe PlayingBoard", JSON.stringify(playingBoardSetup));
-        localStorage.setItem("Tic-Tac-Toe GameEnded", this._gameEnded );
+       
     },
 
     importPlayingBoardFromLocalStorage: function() {
@@ -140,6 +139,9 @@ const playingBoard = {
 
             for(let field in boardSetup) {
                 if(boardSetup[field]) {
+
+                    this.disableClickOnPlayedField(field);
+
                     if(boardSetup[field] === "O") {
                         document.querySelector(`#${field} svg circle`).classList.remove("hidden");
                     } else {
@@ -147,12 +149,18 @@ const playingBoard = {
                         document.querySelector(`#${field} svg .line2`).classList.remove("hidden");
                     }
                 }
-            }
+            } 
+        }
+    },
 
-            this._gameEnded = JSON.parse(localStorage.getItem("Tic-Tac-Toe GameEnded"));
-            if(this._gameEnded) {
-                eventListenerHandler.removeEventListenersFromPlayingBoard();
-            }
+    saveGameStateToLocalStorage: function() {
+        localStorage.setItem("Tic-Tac-Toe GameEnded", this._gameEnded );
+    },
+
+    importGameStateFromLocalStorage: function() {
+        this._gameEnded = JSON.parse(localStorage.getItem("Tic-Tac-Toe GameEnded"));
+        if(this._gameEnded) {
+            eventListenerHandler.removeEventListenersFromPlayingBoard();
         }
     },
 
@@ -161,7 +169,6 @@ const playingBoard = {
         whichPlayerLogic._round = 1;
         whichPlayerLogic.currentPlayer = "Player 1";
         
-
         const boardSetup = this._playingBoardObject;
         for(let field in boardSetup) {
             if(boardSetup[field]) {
@@ -195,11 +202,10 @@ const playingBoard = {
             };
 
         this.savePlayingBoardToLocalStorage();
+        this.saveGameStateToLocalStorage();
   
-        this.enableClickOnAllFields();
-        
+        this.enableClickOnAllFields();   
     }
-
 }
 
 const whichPlayerLogic = {
@@ -267,6 +273,7 @@ eventListenerHandler.addEventListenersToPlayingBoard();
 playerScores.importPlayerPointsFromLocalStorage();
 playerScores.showScoresOnPage();
 playingBoard.importPlayingBoardFromLocalStorage();
+playingBoard.importGameStateFromLocalStorage();
 whichPlayerLogic.importCurrentRoundAndPlayerFromLocalStorage();
 eventListenerHandler.addResetScoreEventListener();
 eventListenerHandler.addNewGameEventListener();
