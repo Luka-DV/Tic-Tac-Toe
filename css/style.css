@@ -76,24 +76,16 @@ main {
   margin: 0.5%;
 }
 
-
-/******************************************
-/* ADDITIONAL STYLES
-/*******************************************/
-
-
-/* 0000000000000000000000000000000000000000000 jf */
-
-.hidden {
-  display: none;
+.close-button {
+  width: clamp(91px, 25%, 150px);
+  min-height: 2rem;
+  border-radius: 10px;
+  font-weight: 700;
+  margin: 0.5%;
 }
 
-.disable-click {
-  pointer-events: none;
-}
-
-.disable-click-all {
-  pointer-events: none;
+dialog {
+  width: clamp(200px, 50%, 1000px);
 }
 
 
@@ -142,3 +134,21 @@ main {
      stroke-dashoffset: 0;
   }
 }
+
+
+/******************************************
+/* ADDITIONAL STYLES
+/*******************************************/
+
+.hidden {
+  display: none;
+}
+
+.disable-click {
+  pointer-events: none;
+}
+
+.disable-click-all {
+  pointer-events: none;
+}
+
