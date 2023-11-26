@@ -68,7 +68,7 @@ main {
   width: 100%;
 }
 
-#reset button {
+button {
   width: clamp(91px, 25%, 150px);
   min-height: 2rem;
   border-radius: 10px;
@@ -77,15 +77,40 @@ main {
 }
 
 .close-button {
-  width: clamp(91px, 25%, 150px);
-  min-height: 2rem;
-  border-radius: 10px;
-  font-weight: 700;
-  margin: 0.5%;
+  width: clamp(68.25px, 18.75%, 112.5px);
 }
 
-dialog {
-  width: clamp(200px, 50%, 1000px);
+button:hover {
+  background: rgb(0 0 0 /0.15);
+}
+
+.modal {
+  width: clamp(200px, 50%, 1000px); 
+  border-radius: 10px;
+  box-shadow: 0 0 1em rgb(0 0 0 /0.5);
+
+  text-align: center;
+}
+
+.modal::backdrop {
+  background: linear-gradient(45deg, yellow, orange);
+  opacity: 0.2;
+}
+
+.modal-text {
+  font-size: 1.2em;
+}
+
+#first-line {
+  padding: 0.5em 0;
+  margin-bottom: 0;
+}
+
+#second-line {
+  padding: 0 0 0.5em 0;
+  margin-top: 0;
+  font-style: italic;
+  font-weight: 400;
 }
 
 
