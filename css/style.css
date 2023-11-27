@@ -93,8 +93,8 @@ button:hover {
 }
 
 .modal::backdrop {
-  background: linear-gradient(45deg, yellow, orange);
-  opacity: 0.2;
+  background: linear-gradient(45deg, white, yellow);
+  opacity: 0.4;
 }
 
 .modal-text {
@@ -108,7 +108,6 @@ button:hover {
 
 #second-line {
   padding: 0 0 0.5em 0;
-  margin-top: 0;
   font-style: italic;
   font-weight: 400;
 }
