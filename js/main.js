@@ -73,34 +73,61 @@ const playingBoard = {
             } else {
                 this._playingBoardObject[field] = "X";
             }
-            this.checkWinner(player);
+            this.checkWinningCondition(player);
             this.savePlayingBoardToLocalStorage();
             this.saveGameStateToLocalStorage();
         }, 500)
     },
 
-    checkWinner: function(player) {
+    checkWinningCondition: function(player) {
+
+        const board = this._playingBoardObject;
+        
         if(  //ROWS:
-        (this._playingBoardObject["A1"] && this._playingBoardObject["A1"] === this._playingBoardObject["B1"] && this._playingBoardObject["A1"] === this._playingBoardObject["C1"]) ||
-        (this._playingBoardObject["A2"] && this._playingBoardObject["A2"] === this._playingBoardObject["B2"] && this._playingBoardObject["A2"] === this._playingBoardObject["C2"]) ||
-        (this._playingBoardObject["A3"] && this._playingBoardObject["A3"] === this._playingBoardObject["B3"] && this._playingBoardObject["A3"] === this._playingBoardObject["C3"]) ||
+        (board["A1"] && board["A1"] === board["B1"] && board["A1"] === board["C1"]) ||
+        (board["A2"] && board["A2"] === board["B2"] && board["A2"] === board["C2"]) ||
+        (board["A3"] && board["A3"] === board["B3"] && board["A3"] === board["C3"]) ||
         //COLUMNS:
-        (this._playingBoardObject["A1"] && this._playingBoardObject["A1"] === this._playingBoardObject["A2"] && this._playingBoardObject["A1"] === this._playingBoardObject["A3"]) ||
-        (this._playingBoardObject["B1"] && this._playingBoardObject["B1"] === this._playingBoardObject["B2"] && this._playingBoardObject["B1"] === this._playingBoardObject["B3"]) ||
-        (this._playingBoardObject["C1"] && this._playingBoardObject["C1"] === this._playingBoardObject["C2"] && this._playingBoardObject["C1"] === this._playingBoardObject["C3"]) ||
+        (board["A1"] && board["A1"] === board["A2"] && board["A1"] === board["A3"]) ||
+        (board["B1"] && board["B1"] === board["B2"] && board["B1"] === board["B3"]) ||
+        (board["C1"] && board["C1"] === board["C2"] && board["C1"] === board["C3"]) ||
         //DIAGONAL:
-        (this._playingBoardObject["A1"] && this._playingBoardObject["A1"] === this._playingBoardObject["B2"] && this._playingBoardObject["A1"] === this._playingBoardObject["C3"]) ||
-        (this._playingBoardObject["C1"] && this._playingBoardObject["C1"] === this._playingBoardObject["B2"] && this._playingBoardObject["C1"] === this._playingBoardObject["A3"])
+        (board["A1"] && board["A1"] === board["B2"] && board["A1"] === board["C3"]) ||
+        (board["C1"] && board["C1"] === board["B2"] && board["C1"] === board["A3"])
         ) {
-            alert(`${player} won the game!`)
-            eventListenerHandler.removeEventListenersFromPlayingBoard();
-            playerScores.updateScore(player);
-            playerScores.savePlayerPointsToLocalStorage();
-            playerScores.showScoresOnPage()
-            whichPlayerLogic._round = 1;
-            this._gameEnded = true;  
+           this.handleWin(player);
         } 
     },
+
+    handleWin: function(player) {
+        this.showPopUpWindow(player);
+        eventListenerHandler.removeEventListenersFromPlayingBoard();
+        playerScores.updateScore(player);
+        playerScores.savePlayerPointsToLocalStorage();
+        playerScores.showScoresOnPage()
+        whichPlayerLogic._round = 1;
+        this._gameEnded = true;  
+    },
+
+    showPopUpWindow: function(player) {
+        const modal = document.querySelector("#modal");
+        const modalHeader = document.querySelector("#modal h2");
+        const firstModalParagraph = document.querySelector("#first-line");
+        const secondModalParagraph = document.querySelector("#second-line");
+
+        modalHeader.innerText = `Congratulations ${player}, you have won the game!`;
+
+        firstModalParagraph.innerText = "Here is a dad joke for your effort:"
+        secondModalParagraph.innerText = `"${fecthAPI.dadJoke}"`
+
+        modal.showModal();
+    },
+
+
+   /* 
+    Change all code to constructors
+    Change code to classes */
+
 
     displayPlayerMove: function(player, field) {
         if(player === "Player 1") {
@@ -111,7 +138,7 @@ const playingBoard = {
         }
     },
 
-   tempDisableClickOnOtherFieldsDuringAnimation: function() {
+    tempDisableClickOnOtherFieldsDuringAnimation: function() {
         document.querySelectorAll(".grid-item").forEach(element => element.classList.add("disable-click-all"));
         setTimeout(() => {
             document.querySelectorAll(".grid-item").forEach(element => element.classList.remove("disable-click-all"));
@@ -203,8 +230,10 @@ const playingBoard = {
 
         this.savePlayingBoardToLocalStorage();
         this.saveGameStateToLocalStorage();
+        whichPlayerLogic.saveCurrentRoundAndPlayerToLocalStorage();
   
-        this.enableClickOnAllFields();   
+        this.enableClickOnAllFields();
+        fecthAPI.getDadJoke();  
     }
 }
 
@@ -241,6 +270,37 @@ const whichPlayerLogic = {
 }
 
 
+//Fetch API
+
+
+const fecthAPI = {
+
+    dadJoke: null,
+
+    getDadJoke: function() {
+
+        const url = "https://api.api-ninjas.com/v1/dadjokes?limit=1"
+        fetch(url, {
+              headers: {
+                'X-Api-Key': 'l6OOWd+mSRT7PJialtqkUQ==ai1bCtCXuqTka7oR'
+              }
+        })
+        .then(res => {
+            if(!res.ok) {
+                throw new Error ("Network response was not OK");
+            }
+            return res.json();
+        })
+        .then( data => {
+            this.dadJoke = data[0].joke;
+        })
+        .catch(err => {
+            console.log("Error: ", err)
+        })
+    }
+}
+
+
 //Event listeners
 
 const eventListenerHandler = {
@@ -266,8 +326,18 @@ const eventListenerHandler = {
         document.querySelector("#newGameButton").addEventListener("click", () => {
             playingBoard.newGameResetBoard();
         })
+    },
+
+    addModalCloseButtonEventListener: function() {
+        document.querySelector(".close-button").addEventListener("click", () => {
+            const modal = document.querySelector("#modal");
+            modal.close();
+        })
     }
 }
+
+
+//Initialization
 
 eventListenerHandler.addEventListenersToPlayingBoard();
 playerScores.importPlayerPointsFromLocalStorage();
@@ -277,3 +347,5 @@ playingBoard.importGameStateFromLocalStorage();
 whichPlayerLogic.importCurrentRoundAndPlayerFromLocalStorage();
 eventListenerHandler.addResetScoreEventListener();
 eventListenerHandler.addNewGameEventListener();
+eventListenerHandler.addModalCloseButtonEventListener();
+fecthAPI.getDadJoke();
