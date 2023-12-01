@@ -1,50 +1,55 @@
 
-//CONSTRUCTORS//
+//CONSTRUCTORS + IIFE//
 
 "use strict";
 
 
 //Player scores//
 
-function PlayerScores() {
+//IIFE:
+
+const playerScores = (function() {
     let player1Score = 0;
     let player2Score=  0;
 
-    this.updateScore = function(player) {
+    return {
+
+    updateScore: function(player) {
         if(player === "Player 1") player1Score++;
         else player2Score++;
-    };
+    },
 
-    this.showScoresOnPage = function() {
+    showScoresOnPage: function() {
         document.querySelector("#player1 .playerScore").innerText = player1Score;
         document.querySelector("#player2 .playerScore").innerText = player2Score;
-    };
+    },
 
-    this.savePlayerPointsToLocalStorage = function() {
+    savePlayerPointsToLocalStorage: function() {
         const playerScores = {
             "Player 1": player1Score,
             "Player 2": player2Score
         };
         localStorage.setItem("Tic-Tac-Toe Scores", JSON.stringify(playerScores));
-    };
+    },
 
-    this.importPlayerPointsFromLocalStorage = function() {
+    importPlayerPointsFromLocalStorage: function() {
         if(localStorage.getItem("Tic-Tac-Toe Scores")) {
             const playerPoints = JSON.parse(localStorage.getItem("Tic-Tac-Toe Scores"));
             player1Score = playerPoints["Player 1"];
             player2Score = playerPoints["Player 2"];
         }
-    };
+    },
 
-    this.resetScores = function() {
+    resetScores: function() {
         player1Score = 0;
         player2Score = 0;
         this.showScoresOnPage();
         this.savePlayerPointsToLocalStorage();
-    };
-};
+    }
+}
+})();
 
-const playerScores = new PlayerScores();
+//const playerScores = new PlayerScores();
 
 
 //GAME LOGIC//
