@@ -294,25 +294,29 @@ class FetchAPI {
     
     fetchDadJoke() {
 
-        const url = "https://api.api-ninjas.com/v1/dadjokes?limit=1";
+        const url = "https://api.api-ninjas.com/v1/dadjokes"; //limit parameter is for premium subscribers only
         fetch(url, {
             headers: {
                 'X-Api-Key': 'l6OOWd+mSRT7PJialtqkUQ==ai1bCtCXuqTka7oR'
             }
         })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error("Network response was not OK");
-                }
-                return res.json();
-            })
-            .then(data => {
-                this.#dadJoke = data[0].joke;
-            })
-            .catch(err => {
-                console.log("Error: ", err);
-            });
-        };
+        .then(res => {
+            if (!res.ok) {
+                throw new Error("Network response was not OK");
+                //better error handling:
+               /*  return res.json().then(err => {
+                    throw new Error(`Network response was not OK: ${err.error}`);
+                }); */
+            }
+            return res.json();
+        })
+        .then(data => {
+            this.#dadJoke = data[0].joke;
+        })
+        .catch(err => {
+            console.log("Error: ", err);
+        });
+    };
 
     get dadJoke() {
         return this.#dadJoke;
