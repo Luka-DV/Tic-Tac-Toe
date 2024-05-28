@@ -330,9 +330,22 @@ const fetchAPI = new FetchAPI();
 
 class EventListenerHandler {
 
-    passPlayDataForEventListener(item) {
+/*     constructor() {
+        this.parameter = "ABBA";
+    } */
+/* 
+     passPlayDataForEventListener(item) { //item is the PointerEvent object, "this" is the target (the element) of the PointerEvent object.
+     console.log(item) // PointerEvent
+     console.log(this) // clicked element
+     console.log(item.currentTarget === this) //true
             playingBoard.choseField(whichPlayerLogic._currentPlayer, item.currentTarget.id);
-    };
+            //The currentTarget property of this event object is the element to which the event handler is attached
+    };  */
+
+    passPlayDataForEventListener() { //item is the PointerEvent object, "this" is the target (the element) of the pointerEvent object.
+       // eventListenerHandler.parameter = this;    
+        playingBoard.choseField(whichPlayerLogic._currentPlayer, this.id); // is the same as item.currentTarget.id !
+       };
 
     addEventListenersToPlayingBoard() {
             document.querySelectorAll(".grid-item").forEach(item => item.addEventListener("click", this.passPlayDataForEventListener));
